@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: wash-world_flask
+    container_name: washworld_flask
     ports:
       - 80:80 # 0 - 1024 reserved. Use any port from 1025 to 65535
     volumes:
@@ -11,10 +11,10 @@ services:
 
   mariadb:
     image: mariadb:10.6.20
-    container_name: wash-world_mariadb
+    container_name: washworld_mariadb
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: wash-world
+      MYSQL_DATABASE: washworld
     volumes:
       - mariadb_data:/var/lib/mysql
     ports:
@@ -22,7 +22,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin:5.2.1-apache
-    container_name: wash-world_phpmyadmin
+    container_name: washworld_phpmyadmin
     depends_on:
       - mariadb
     environment:
@@ -33,5 +33,3 @@ services:
 
 volumes:
   mariadb_data:
-
-

@@ -18,7 +18,7 @@ def db():
             host = "mariadb",
             user = "root",  
             password = "password",
-            database = "wash-world"
+            database = "washworld"
         )
         cursor = db.cursor(dictionary=True)
         return db, cursor
