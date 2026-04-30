@@ -39,38 +39,6 @@ def no_cache(view):
 
 
 ##############################
-USER_NAME_MIN = 2
-USER_NAME_MAX = 20
-REGEX_USER_NAME = f"^.{{{USER_NAME_MIN},{USER_NAME_MAX}}}$"
-def validate_user_name():
-    user_name = request.form.get("user_name", "").strip()
-    if not re.match(REGEX_USER_NAME, user_name):
-        raise Exception("--error-- user_name")
-    return user_name
-
-##############################
-USER_FIRST_NAME_MIN = 2
-USER_FIRST_NAME_MAX = 20
-REGEX_USER_FIRST_NAME = f"^.{{{USER_FIRST_NAME_MIN},{USER_FIRST_NAME_MAX}}}$"
-def validate_user_first_name():
-    user_first_name = request.form.get("user_first_name", "").strip()
-    if not re.match(REGEX_USER_FIRST_NAME, user_first_name):
-        raise Exception("--error-- user_first_name")
-    return user_first_name
-
-
-##############################
-USER_LAST_NAME_MIN = 2
-USER_LAST_NAME_MAX = 20
-REGEX_USER_LAST_NAME = f"^.{{{USER_LAST_NAME_MIN},{USER_LAST_NAME_MAX}}}$"
-def validate_user_last_name():
-    user_last_name = request.form.get("user_last_name", "").strip()
-    if not re.match(REGEX_USER_LAST_NAME, user_last_name):
-        raise Exception("--error-- user_last_name")
-    return user_last_name
-
-
-##############################
 REGEX_EMAIL = "^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
 def validate_email( email ):
     email = email.strip()
@@ -101,15 +69,21 @@ def validate_uuid4(uuid):
     return uuid
 
 ##############################
-#0 to 9 letters a to f
-REGEX_UUID4_PARANOIA = "^[0-9a-f]{64}$"
-def validate_uuid4_paranoia(uuid):
-    uuid = uuid.strip()
-    if not re.match(REGEX_UUID4_PARANOIA, uuid):
-        raise Exception("company_exception paranoia")
-    return uuid
+USER_PHONE = 8
+REGEX_USER_PHONE = f"^[1-9][0-9]{{{USER_PHONE - 1}}}$"
+def validate_user_phone( phone ):
+    user_phone = phone.strip()
+    if not re.match(REGEX_USER_PHONE, user_phone):
+        raise Exception("company_exception user_phone")
+    return user_phone
 
-
+##############################
+REGEX_USER_LICENSE_PLATE = "^[A-Za-z]{2}[0-9]{5}$"
+def validate_user_license_plate(license_plate):
+    user_license_plate = license_plate.strip().upper()
+    if not re.match(REGEX_USER_LICENSE_PLATE, user_license_plate):
+        raise Exception("company_exception user_license_plate")
+    return user_license_plate
 
 ##############################
 def send_email(subject, html):
