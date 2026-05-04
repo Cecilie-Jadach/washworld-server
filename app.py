@@ -115,6 +115,9 @@ def sign_up():
         terms_accepted = 1 if request.form.get("terms_accepted") else 0
         offers_accepted = 1 if request.form.get("offers_accepted") else 0
 
+        membership_created_at = int(time.time())
+        user_created_at = int(time.time())
+
         if not user_membership:
             return jsonify({"error": "Membership selection is required"}), 400
         
@@ -135,8 +138,8 @@ def sign_up():
         #connect to database
         db, cursor = x.db()
         # Indsæt bruger i users tabellen
-        q_user = "INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(q_user, (user_pk, user_email, user_membership, user_hashed_password, user_phone, user_primary_location, access_to_all_washes, terms_accepted, offers_accepted, user_payment_method, user_verification_key, 0, user_reset_password_key))
+        q_user = "INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(q_user, (user_pk, user_email, user_membership, user_hashed_password, user_phone, user_primary_location, access_to_all_washes, terms_accepted, offers_accepted, user_payment_method, user_verification_key, 0, user_reset_password_key, membership_created_at, user_created_at))
 
         # Indsæt nummerplade i license_plates tabellen med reference til brugeren
         q_license = "INSERT INTO license_plates VALUES (%s, %s)"
