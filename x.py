@@ -37,7 +37,6 @@ def no_cache(view):
         return response
     return no_cache_view
 
-
 ##############################
 REGEX_EMAIL = "^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
 def validate_email( email ):
@@ -45,7 +44,6 @@ def validate_email( email ):
     if not re.match(REGEX_EMAIL, email): 
         raise Exception("company_exception email")
     return email
-
 
 ##############################
 # [a-z0-9æøå]
@@ -57,7 +55,6 @@ def validate_user_password( password ):
     if not re.match(REGEX_USER_PASSWORD, user_password):
         raise Exception("company_exception user_password")
     return user_password
-
 
 ##############################
 #0 to 9 letters a to f
@@ -86,6 +83,15 @@ def validate_user_license_plate(license_plate):
     return user_license_plate
 
 ##############################
+#0 to 9 letters a to f
+REGEX_UUID4 = "^[0-9a-f]{32}$"
+def validate_uuid4(uuid):
+    uuid = uuid.strip()
+    if not re.match(REGEX_UUID4, uuid):
+        raise Exception("--error-- uuid invalid")
+    return uuid
+
+##############################
 def send_email(subject, html):
     try:    
         # Create a gmail 
@@ -95,7 +101,7 @@ def send_email(subject, html):
 
         # Email and password of the sender's Gmail account
         sender_email = "ceciliejadach95@gmail.com"
-        password = "kvdb kbcm beeg vlhm"  # If 2FA is on, use an App Password instead
+        password = "qeft rfkd ryvm kvrt"  # If 2FA is on, use an App Password instead
 
         # Receiver email address
         receiver_email = "ceciliejadach95@gmail.com"
