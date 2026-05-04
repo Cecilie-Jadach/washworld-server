@@ -82,18 +82,45 @@ def show_profile():
     return jsonify(user)
 
 ##############################
+@app.get("/locations")
+def show_locations():
+    try:
+        db, cursor = x.db()
+        q = "SELECT location_name, latitude, longitude FROM wash_world_locations"
+        cursor.execute(q, ())
+        rows = cursor.fetchall()
+        
+        locations = [
+            {
+                "location_name": row["location_name"],
+                "latitude": float(row["latitude"]),
+                "longitude": float(row["longitude"])
+            }
+            for row in rows
+        ]
+
+        return jsonify({"locations": locations}), 200
+    except Exception as ex:
+        ic(ex)
+        return jsonify({"error": "System under maintenance"}), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+##############################
 @app.get("/sign-up")
 @x.no_cache
 def show_signup():
     try:
         
         db, cursor = x.db()
-        q = "SELECT location_name FROM wash_world_locations"
+        # q = "SELECT location_name FROM wash_world_locations"
+        q = "SELECT location_name, latitude, longitude FROM wash_world_locations"
         cursor.execute(q, ())
         locations = cursor.fetchall()
 
-        # return jsonify({"locations": locations}), 200
-        return render_template("page_sign_up.html", locations=locations, x=x), 200
+        return jsonify({"locations": locations}), 200
+        # return render_template("page_sign_up.html", locations=locations, x=x), 200
     except Exception as ex:
         ic(ex)
         return "System under maintenance", 500
@@ -166,7 +193,7 @@ def sign_up():
             return jsonify({"error": f"Password must be between {x.USER_PASSWORD_MIN} and {x.USER_PASSWORD_MAX} characters"}) , 400
         
         if "company_exception user_phone" in str(ex):
-            return jsonify({"error": f"Phinenumber must be {x.USER_PHONE} characters"}), 400
+            return jsonify({"error": f"Phonenumber must be {x.USER_PHONE} characters"}), 400
 
         if "company_exception user_license_plate" in str(ex):
             return jsonify({"error": "The license plate must consist of 2 letters followed by 5 numbers (e.g. AB12345)"}), 400
