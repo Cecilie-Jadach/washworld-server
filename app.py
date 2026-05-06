@@ -86,18 +86,21 @@ def show_profile():
 def show_locations():
     try:
         db, cursor = x.db()
-        q = "SELECT location_name, latitude, longitude FROM wash_world_locations"
+        #NOTE: https://www.w3schools.com/sql/sql_join_inner.asp
+        q = """
+            SELECT wash_world_locations.*, location_busyness.busyness_status 
+            FROM wash_world_locations 
+            INNER JOIN location_busyness ON wash_world_locations.location_busyness_fk = location_busyness.busyness_fk
+            """
         cursor.execute(q, ())
         rows = cursor.fetchall()
         
-        locations = [
-            {
-                "location_name": row["location_name"],
-                "latitude": float(row["latitude"]),
-                "longitude": float(row["longitude"])
-            }
-            for row in rows
-        ]
+        locations = []
+        for row in rows:
+            location = dict(row)
+            location["latitude"] = float(row["latitude"])
+            location["longitude"] = float(row["longitude"])
+            locations.append(location)
 
         return jsonify({"locations": locations}), 200
     except Exception as ex:
