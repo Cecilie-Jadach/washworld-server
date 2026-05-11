@@ -56,7 +56,7 @@ def login():
         if not check_password_hash(user["user_password"], user_password):
             return "Wrong password", 401
 
-        access_token = create_access_token(identity=str(user))
+        access_token = create_access_token(identity=row["user_pk"])
 
         return jsonify(access_token=access_token)
 
@@ -78,8 +78,24 @@ def login():
 @app.get("/profile")
 @jwt_required()
 def show_profile():
-    user = get_jwt_identity()
-    return jsonify(user)
+    try:
+        user_pk = get_jwt_identity()
+
+        db, cursor = x.db()
+        q = "SELECT * FROM users WHERE user_pk = %s"
+        cursor.execute(q, (user_pk,))
+        row = cursor.fetchone()
+
+        if not row:
+            return jsonify({"error": "Bruger ikke fundet"}), 404
+
+        return jsonify(dict(row)), 200
+    except Exception as ex: 
+        ic(ex)
+        return jsonify({"error": str(ex)}), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
 
 ##############################
 @app.get("/locations")
@@ -362,3 +378,54 @@ def reset_password():
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
 
+##############################
+@app.patch("/membership/pause")
+@jwt_required()
+def pause_membership():
+    try:
+        user_pk = get_jwt_identity()
+        membership_pause_months = request.json.get("membership_pause_months", 0)
+
+        ic(user_pk)
+
+        if membership_pause_months not in [1, 2, 3]:
+            return jsonify({"error": "Vælg 1, 2 eller 3 måneder"}), 400
+
+        membership_paused_at = int(time.time())
+
+        db, cursor = x.db() 
+        q = """UPDATE users SET membership_paused_at = %s, membership_pause_months = %s WHERE user_pk = %s"""
+        cursor.execute(q,(membership_paused_at, membership_pause_months, user_pk))
+        db.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Bruger ikke fundet"}), 404
+
+        return jsonify({"message": f"Medlemsskab pauseret i {membership_pause_months} måneder"}), 200
+    except Exception as ex: 
+        ic(ex)
+        return jsonify({"error": str(ex)}), 500
+    finally: 
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+##############################
+@app.patch("/membership/reactivate")
+@jwt_required()
+def reactivate_membership():
+    try:
+        user_pk = get_jwt_identity()
+        membership_reactivated_at = int(time.time())
+
+        db, cursor = x.db() 
+        q = """UPDATE users SET membership_paused_at = 0, membership_reactivated_at = %s, membership_pause_months = 0 WHERE user_pk = %s"""
+        cursor.execute(q,(membership_reactivated_at, user_pk))
+        db.commit()
+
+        return jsonify({"message": f"Medlemsskab genaktiveret"}), 200
+    except Exception as ex: 
+        ic(ex)
+        return jsonify({"error": str(ex)}), 500
+    finally: 
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
