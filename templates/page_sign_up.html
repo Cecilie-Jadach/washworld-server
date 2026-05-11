@@ -1,54 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign up</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Sign up</h1>
     <form action="/sign-up" method="POST">
-        <div>
-        <input name="membership" type="radio" value="gold">
-        <label for="guld">Guld</label><br>
-        <input name="membership" type="radio" value="premium">
-        <label for="premium">Premium</label><br>
-        <input name="membership" type="radio" value="brilliant">
-        <label for="brilliant">Brilliant</label><br>
-        <input name="membership" type="radio" value="single_wash">
-        <label for="single_wash">Enkeltvask</label><br>
-    </div>
-    <label for="email">E-mail</label>
-    <input name="email" type="text" placeholder="Email">
-    <label for="password">Adgangskode</label>
-    <input name="password" type="text" placeholder="Adgangskode">
-    <label for="phone">Mobilnummer</label>
-    <input type="tel" name="phone" placeholder="+45" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-    <label for="license_plate">Nummerplade</label>
-    <input type="text" name="license_plate" placeholder="AB12345">
-    <label for="primary_location">Vælg primær vaskehal</label>
-    <select id="primary_location" name="primary_location" required>
-    {% for location in locations %}
-        <option value="{{ location['location_name'] }}">{{ location['location_name'] }}</option>
-    {% endfor %}
-    </select>
-    <div>
-        <input type="checkbox" name="access_to_all_washes" id="access_to_all_washes">
-        <label for="access_to_all_washes">Fri adgang til alle vaskehaller 10 kr/mdr.</label>
+      <div>
+        <input name="membership" type="radio" value="gold" />
+        <label for="guld">Guld</label><br />
+        <input name="membership" type="radio" value="premium" />
+        <label for="premium">Premium</label><br />
+        <input name="membership" type="radio" value="brilliant" />
+        <label for="brilliant">Brilliant</label><br />
+        <input name="membership" type="radio" value="single_wash" />
+        <label for="single_wash">Enkeltvask</label><br />
+      </div>
+      <label for="email">E-mail</label>
+      <input name="email" type="text" placeholder="Email" />
+      <label for="password">Adgangskode</label>
+      <input name="password" type="text" placeholder="Adgangskode" />
+      <label for="confirm_password">Gentag adgangskode</label>
+      <input
+        name="confirm_password"
+        type="text"
+        placeholder="Gentag adgangskode"
+      />
+      <label for="phone">Mobilnummer</label>
+      <input
+        type="tel"
+        name="phone"
+        placeholder="+45"
+        onkeypress="return event.charCode >= 48 && event.charCode <= 57;"
+      />
+      <label for="license_plate">Nummerplade</label>
+      <input type="text" name="license_plate" placeholder="AB12345" />
+      <label for="primary_location">Vælg primær vaskehal</label>
+      <select id="primary_location" name="primary_location" required>
+        {% for location in locations %}
+        <option value="{{ location['location_name'] }}">
+          {{ location['location_name'] }}
+        </option>
+        {% endfor %}
+      </select>
+      <div>
+        <input
+          type="checkbox"
+          name="access_to_all_washes"
+          id="access_to_all_washes"
+        />
+        <label for="access_to_all_washes"
+          >Fri adgang til alle vaskehaller 10 kr/mdr.</label
+        >
 
-        <input type="checkbox" name="terms_accepted" id="terms_accepted">
+        <input type="checkbox" name="terms_accepted" id="terms_accepted" />
         <label for="terms_accepted">Jeg accepterer Wash Worlds vilkår</label>
 
-        <input type="checkbox" name="offers_accepted" id="offers_accepted">
-        <label for="offers_accepted">Jeg accepterer, at Wash World må sende mig tilbud.</label>
-    </div>
-    <div>
-        <input name="payment" type="radio" value="mobilepay">
-        <label for="mobilepay">Mobilepay</label><br>
-        <input name="payment" type="radio" value="applepay">
-        <label for="applepay">Applepay</label><br>
-    </div>
-    <button>Sign up</button>
+        <input type="checkbox" name="offers_accepted" id="offers_accepted" />
+        <label for="offers_accepted"
+          >Jeg accepterer, at Wash World må sende mig tilbud.</label
+        >
+      </div>
+      <div>
+        <input name="payment" type="radio" value="mobilepay" />
+        <label for="mobilepay">Mobilepay</label><br />
+        <input name="payment" type="radio" value="applepay" />
+        <label for="applepay">Applepay</label><br />
+      </div>
+      <button>Sign up</button>
     </form>
-</body>
+  </body>
 </html>

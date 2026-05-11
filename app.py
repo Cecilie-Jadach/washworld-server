@@ -115,15 +115,14 @@ def show_locations():
 @x.no_cache
 def show_signup():
     try:
-        
         db, cursor = x.db()
         # q = "SELECT location_name FROM wash_world_locations"
         q = "SELECT location_name, latitude, longitude FROM wash_world_locations"
         cursor.execute(q, ())
         locations = cursor.fetchall()
 
-        return jsonify({"locations": locations}), 200
-        # return render_template("page_sign_up.html", locations=locations, x=x), 200
+        # return jsonify({"locations": locations}), 200
+        return render_template("page_sign_up.html", locations=locations, x=x), 200
     except Exception as ex:
         ic(ex)
         return "System under maintenance", 500
@@ -135,6 +134,7 @@ def sign_up():
         user_membership = request.form.get("membership", "")
         user_email = x.validate_email( request.form.get("email", "") )
         user_password = x.validate_user_password( request.form.get("password", "") )
+        user_confirm_password = request.form.get("confirm_password", "").strip()
         user_hashed_password = generate_password_hash(user_password)
         user_phone = x.validate_user_phone( request.form.get("phone", "") )
         user_license_plate = x.validate_user_license_plate( request.form.get("license_plate", "") )
@@ -156,8 +156,10 @@ def sign_up():
 
         if not user_payment_method:
             return jsonify({"error": "Payment method selection is required"}), 400
-        
 
+        if user_confirm_password != user_password:
+            return "Passwords do not match", 400
+        
         user_pk = uuid.uuid4().hex
         user_verification_key = uuid.uuid4().hex
         ic(user_verification_key)
