@@ -133,6 +133,7 @@ def sign_up():
     try:
         user_membership = request.form.get("membership", "")
         user_email = x.validate_email( request.form.get("email", "") )
+        user_confirm_email = request.form.get("confirm_email", "").strip()
         user_password = x.validate_user_password( request.form.get("password", "") )
         user_confirm_password = request.form.get("confirm_password", "").strip()
         user_hashed_password = generate_password_hash(user_password)
@@ -156,6 +157,9 @@ def sign_up():
 
         if not user_payment_method:
             return jsonify({"error": "Payment method selection is required"}), 400
+
+        if user_confirm_email != user_email:
+            return "Emails do not match", 400
 
         if user_confirm_password != user_password:
             return "Passwords do not match", 400
