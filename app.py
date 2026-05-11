@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import uuid
 import time
 import x
+from datetime import timedelta
 
 from flask_cors import CORS
 
@@ -17,6 +18,7 @@ app = Flask(__name__)
 CORS(app)  # allows everything
 
 app.config["JWT_SECRET_KEY"] = "super-secret-key"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 jwt = JWTManager(app)
 
 
