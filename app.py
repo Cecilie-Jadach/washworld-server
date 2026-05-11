@@ -151,18 +151,18 @@ def sign_up():
 
         if not user_membership:
             return jsonify({"error": "Membership selection is required"}), 400
-        
-        if not terms_accepted:
-            return jsonify({"error": "Terms accepted selection is required"}), 400
-
-        if not user_payment_method:
-            return jsonify({"error": "Payment method selection is required"}), 400
 
         if user_confirm_email != user_email:
             return "Emails do not match", 400
 
         if user_confirm_password != user_password:
             return "Passwords do not match", 400
+        
+        if not terms_accepted:
+            return jsonify({"error": "Terms accepted selection is required"}), 400
+
+        if not user_payment_method:
+            return jsonify({"error": "Payment method selection is required"}), 400
         
         user_pk = uuid.uuid4().hex
         user_verification_key = uuid.uuid4().hex
@@ -204,7 +204,7 @@ def sign_up():
         if "company_exception user_phone" in str(ex):
             return jsonify({"error": f"Phonenumber must be {x.USER_PHONE} characters"}), 400
 
-        if "company_exception user_license_plate" in str(ex):
+        if "company_exception license_plate" in str(ex):
             return jsonify({"error": "The license plate must consist of 2 letters followed by 5 numbers (e.g. AB12345)"}), 400
         
         if "Duplicate entry" in str(ex) and "user_email" in str(ex):
@@ -213,7 +213,7 @@ def sign_up():
         if "Duplicate entry" in str(ex) and "user_phone" in str(ex):
             return jsonify({"error": "Phonenumber already exsists"}), 400
         
-        if "Duplicate entry" in str(ex) and "user_license_plate" in str(ex):
+        if "Duplicate entry" in str(ex) and "license_plate" in str(ex):
             return jsonify({"error": "Licenseplate already exists"}), 400
         
         return jsonify({"error": str(ex)}), 500
