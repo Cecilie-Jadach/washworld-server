@@ -47,20 +47,19 @@ def login():
         cursor.execute(q, (user_email,))
         row = cursor.fetchone()
 
+        if not row:
+            return jsonify({"error": "Forkert e-mail eller adgangskode"}), 401
+        
+        if not check_password_hash(row["user_password"], user_password):
+            return jsonify({"error": "Forkert e-mail eller adgangskode"}), 401
+
         user = {
             "user_email": row["user_email"],
             "user_password": row["user_password"]
             }
 
-        if not row:
-            return "User not found", 401
-        
-        if not check_password_hash(user["user_password"], user_password):
-            return "Wrong password", 401
-
         access_token = create_access_token(identity=row["user_pk"])
-
-        return jsonify(access_token=access_token)
+        return jsonify(access_token=access_token), 200
 
     except Exception as ex: 
         ic(ex)
