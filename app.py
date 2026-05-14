@@ -169,6 +169,7 @@ def sign_up():
         membership_paused_at = 0
         membership_reactivated_at = 0
         membership_pause_months = 0
+        membership_updated_at = 0
 
         if not user_membership:
             return jsonify({"error": "Membership selection is required"}), 400
@@ -195,8 +196,8 @@ def sign_up():
         #connect to database
         db, cursor = x.db()
         # Indsæt bruger i users tabellen
-        q_user = "INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )"
-        cursor.execute(q_user, (user_pk, user_email, user_membership, user_hashed_password, user_phone, user_primary_location, access_to_all_washes, terms_accepted, offers_accepted, user_payment_method, user_verification_key, 0, user_reset_password_key, membership_created_at, user_created_at, membership_pause_months, membership_paused_at, membership_reactivated_at))
+        q_user = "INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )"
+        cursor.execute(q_user, (user_pk, user_email, user_membership, user_hashed_password, user_phone, user_primary_location, access_to_all_washes, terms_accepted, offers_accepted, user_payment_method, user_verification_key, 0, user_reset_password_key, membership_created_at, user_created_at, membership_pause_months, membership_paused_at, membership_reactivated_at, membership_updated_at))
 
         # Indsæt nummerplade i license_plates tabellen med reference til brugeren
         q_license = "INSERT INTO license_plates VALUES (%s, %s)"
@@ -384,7 +385,7 @@ def reset_password():
         if "db" in locals(): db.close()
 
 ##############################
-@app.patch("/membership/pause")
+@app.patch("/api-membership-pause")
 @jwt_required()
 def pause_membership():
     try:
@@ -415,7 +416,7 @@ def pause_membership():
         if "db" in locals(): db.close()
 
 ##############################
-@app.patch("/membership/reactivate")
+@app.patch("/api-membership-reactivate")
 @jwt_required()
 def reactivate_membership():
     try:
@@ -441,8 +442,7 @@ def reactivate_membership():
 def show_license_plate():
     try:
         user_pk = get_jwt_identity()
-        if not user_pk: 
-            return redirect("/login")
+        if not user_pk: return jsonify({"error": "Unauthorized"}), 401
 
         db, cursor = x.db()
         q = "SELECT * FROM license_plates WHERE user_fk = %s"
@@ -456,6 +456,52 @@ def show_license_plate():
 
         return jsonify({"license_plates": license_plates}), 200
     except Exception as ex:
+        ic(ex)
+        return jsonify({"error": "System under maintenance"}), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+##############################
+@app.patch("/api-update-membership")
+@jwt_required()
+def update_membership():
+    try:
+        user_pk = get_jwt_identity()
+        if not user_pk: return jsonify({"error": "Unauthorized"}), 401
+
+        parts = []
+        values = []
+        
+        user_membership = request.json.get("user_membership", "")
+        membership_updated_at = int(time.time())
+
+        if user_membership:
+            parts.append("user_membership = %s")
+            values.append(user_membership)
+
+        parts.append("membership_updated_at = %s")
+        values.append(membership_updated_at)
+        
+        partial_query = ", ".join(parts)
+
+        if not parts: return "nothing to update", 400
+
+        values.append(user_pk)
+
+        q = f"""
+            UPDATE users
+            SET	{partial_query}
+            WHERE user_pk = %s
+        """
+        
+        db, cursor = x.db()
+        cursor.execute(q, values)
+        db.commit()
+
+        return jsonify({"message": "Your membership has been updated"})
+
+    except Exception as ex: 
         ic(ex)
         return jsonify({"error": "System under maintenance"}), 500
     finally:
