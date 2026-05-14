@@ -399,7 +399,7 @@ def pause_membership():
         membership_paused_at = int(time.time())
 
         db, cursor = x.db() 
-        q = """UPDATE users SET membership_paused_at = %s, membership_pause_months = %s WHERE user_pk = %s"""
+        q = """UPDATE users SET membership_paused_at = %s, membership_pause_months = %s, membership_reactivated_at = 0 WHERE user_pk = %s"""
         cursor.execute(q,(membership_paused_at, membership_pause_months, user_pk))
         db.commit()
 
@@ -432,5 +432,32 @@ def reactivate_membership():
         ic(ex)
         return jsonify({"error": str(ex)}), 500
     finally: 
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+##############################
+@app.get("/license-plates")
+@jwt_required()
+def show_license_plate():
+    try:
+        user_pk = get_jwt_identity()
+        if not user_pk: 
+            return redirect("/login")
+
+        db, cursor = x.db()
+        q = "SELECT * FROM license_plates WHERE user_fk = %s"
+        cursor.execute(q, (user_pk,))
+        rows = cursor.fetchall()
+
+        #list comprehension
+        license_plates = []
+        for row in rows:
+            license_plates.append(dict(row))
+
+        return jsonify({"license_plates": license_plates}), 200
+    except Exception as ex:
+        ic(ex)
+        return jsonify({"error": "System under maintenance"}), 500
+    finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
