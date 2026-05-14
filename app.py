@@ -507,3 +507,51 @@ def update_membership():
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
+
+
+##############################
+@app.patch("/api-update-user")
+@jwt_required()
+def update_user():
+    try:
+        user_pk = get_jwt_identity()
+
+        parts = []
+        values = []
+
+        if "email" in request.json:
+            user_email = x.validate_email(request.json.get("email", ""))
+            parts.append("user_email = %s")
+            values.append(user_email)
+
+        if "phone" in request.json:
+            user_phone = x.validate_user_phone(request.json.get("phone", ""))
+            parts.append("user_phone = %s")
+            values.append(user_phone)
+
+        if "primary_location" in request.json:
+            user_primary_location = request.json.get("primary_location", "").strip()
+            if not user_primary_location:
+                return jsonify({"error": "Primary location cannot be empty"}), 400
+            parts.append("user_primary_location = %s")
+            values.append(user_primary_location)
+
+        if not parts:
+            return jsonify({"error": "Nothing to update"}), 400
+
+        values.append(user_pk)
+        partial_query = ", ".join(parts)
+
+        db, cursor = x.db()
+        q = f"UPDATE users SET {partial_query} WHERE user_pk = %s"
+        cursor.execute(q, values)
+        db.commit()
+
+        return jsonify({"message": "User updated"}), 200
+        
+    except Exception as ex:
+        ic(ex)
+        return jsonify({"error": "System under maintenance"}), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
