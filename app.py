@@ -548,10 +548,35 @@ def update_user():
         db.commit()
 
         return jsonify({"message": "User updated"}), 200
-        
+
     except Exception as ex:
         ic(ex)
         return jsonify({"error": "System under maintenance"}), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.delete("/api-delete-user")
+@jwt_required()
+def delete_user():
+    try:
+        user_pk = get_jwt_identity()
+
+        db, cursor = x.db()
+
+        cursor.execute("DELETE FROM license_plates WHERE user_fk = %s", (user_pk,))
+        cursor.execute("DELETE FROM users WHERE user_pk = %s", (user_pk,))
+        db.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "User not found"}), 404
+
+        return jsonify({"message": "User deleted"}), 200
+    except Exception as ex:
+        ic(ex)
+        return jsonify({"error": str(ex)}), 500
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
