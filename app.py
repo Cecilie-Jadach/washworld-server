@@ -295,7 +295,7 @@ def forgot_password():
         row = cursor.fetchone()
         
         if not row:
-            return jsonify({"error": "Email not found"}), 400
+            return jsonify({"error": "E-mail findes ikke i vores system"}), 400
 
         html = render_template("email_forgot_password.html", user_reset_password_key=row["key"])
 
