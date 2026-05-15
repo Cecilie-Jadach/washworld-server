@@ -100,14 +100,14 @@ def send_email(subject, html):
         # Copy the key :
 
         # Email and password of the sender's Gmail account
-        # sender_email = "ceciliejadach95@gmail.com"
-        # password = "qeft rfkd ryvm kvrt"  # If 2FA is on, use an App Password instead
-        sender_email = "linekofod1305@gmail.com"
-        password = "wxio otmi wexw wmtn"  # Lines password
+        sender_email = "ceciliejadach95@gmail.com"
+        password = "qeft rfkd ryvm kvrt"  # If 2FA is on, use an App Password instead
+        #sender_email = "linekofod1305@gmail.com"
+        #password = "wxio otmi wexw wmtn"  # Lines password
 
         # Receiver email address
-        # receiver_email = "ceciliejadach95@gmail.com"
-        receiver_email = "linekofod1305@gmail.com"
+        receiver_email = "ceciliejadach95@gmail.com"
+        #receiver_email = "linekofod1305@gmail.com"
         
         # Create the email message
         message = MIMEMultipart()

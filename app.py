@@ -287,6 +287,7 @@ def show_forgot_password():
 def forgot_password():
     try:
         user_email = x.validate_email( request.form.get("email", "") )
+        ic(user_email)
 
         db, cursor = x.db()
         q = "SELECT user_reset_password_key AS 'key' FROM users WHERE user_email = %s"
@@ -329,7 +330,8 @@ def show_reset_password(key):
         if not row: 
             return jsonify({"error": "Ups..."}), 400
 
-        return render_template("page_reset_password.html", key=key)
+        return jsonify({"message": "Reset your password", "key": key}), 200
+        # return render_template("page_reset_password.html", key=key)
     except Exception as ex: 
         ic(ex)
 
