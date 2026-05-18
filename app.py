@@ -463,6 +463,60 @@ def show_license_plate():
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
 
+
+##############################
+@app.post("/api-add-license-plate")
+@jwt_required()
+def add_license_plate():
+    try:
+        user_pk = get_jwt_identity()
+        license_plate = x.validate_user_license_plate(request.json.get("license_plate", ""))
+
+        db, cursor = x.db()
+        q = "INSERT INTO license_plates VALUES (%s, %s)"
+        cursor.execute(q, (user_pk, license_plate))
+        db.commit()
+
+        return jsonify({"message": "License plate added"}), 201
+    except Exception as ex:
+        ic(ex)
+        if "company_exception license_plate" in str(ex):
+            return jsonify({"error": "The license plate must consist of 2 letters followed by 5 numbers (e.g. AB12345)"}), 400
+        if "Duplicate entry" in str(ex):
+            return jsonify({"error": "License plate already exists"}), 400
+        return jsonify({"error": "System under maintenance"}), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.delete("/api-delete-license-plate/<plate>")
+@jwt_required()
+def delete_license_plate(plate):
+    try:
+        user_pk = get_jwt_identity()
+        plate = x.validate_user_license_plate(plate)
+
+        db, cursor = x.db()
+        q = "DELETE FROM license_plates WHERE user_license_plate = %s AND user_fk = %s"
+        cursor.execute(q, (plate, user_pk))
+        db.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "License plate not found"}), 404
+
+        return jsonify({"message": "License plate deleted"}), 200
+    except Exception as ex:
+        ic(ex)
+        if "company_exception license_plate" in str(ex):
+            return jsonify({"error": "The license plate must consist of 2 letters followed by 5 numbers (e.g. AB12345)"}), 400
+        return jsonify({"error": "System under maintenance"}), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
 ##############################
 @app.patch("/api-update-membership")
 @jwt_required()
@@ -552,6 +606,14 @@ def update_user():
 
     except Exception as ex:
         ic(ex)
+        if "company_exception email" in str(ex):
+            return jsonify({"error": "Invalid email"}), 400
+        if "company_exception user_phone" in str(ex):
+            return jsonify({"error": f"Phonenumber must be {x.USER_PHONE} characters"}), 400
+        if "Duplicate entry" in str(ex) and "user_email" in str(ex):
+            return jsonify({"error": "E-mail already exists"}), 400
+        if "Duplicate entry" in str(ex) and "user_phone" in str(ex):
+            return jsonify({"error": "Phonenumber already exists"}), 400
         return jsonify({"error": "System under maintenance"}), 500
     finally:
         if "cursor" in locals(): cursor.close()
