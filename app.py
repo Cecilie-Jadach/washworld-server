@@ -117,11 +117,11 @@ def show_locations():
 @app.post("/api-sign-up")
 def sign_up():
     try:
-        user_membership = request.form.get("membership", "") #validation??
+        user_membership = request.form.get("membership", "")
         user_email = x.validate_email( request.form.get("email", "") )
-        user_confirm_email = request.form.get("confirm_email", "").strip() #validation??
+        user_confirm_email = request.form.get("confirm_email", "").strip()
         user_password = x.validate_user_password( request.form.get("password", "") )
-        user_confirm_password = request.form.get("confirm_password", "").strip() #validation??
+        user_confirm_password = request.form.get("confirm_password", "").strip()
         user_hashed_password = generate_password_hash(user_password)
         user_phone = x.validate_user_phone( request.form.get("phone", "") )
         user_license_plate = x.validate_user_license_plate( request.form.get("license_plate", "") )
@@ -309,7 +309,7 @@ def show_reset_password(key):
 def reset_password():
     try:
         user_password = x.validate_user_password(request.form.get("password", ""))
-        confirm_password = request.form.get("confirm-password", "").strip() #validation??
+        confirm_password = request.form.get("confirm-password", "").strip()
         
         if confirm_password != user_password:
             return "Passwords does not match", 400
@@ -483,9 +483,9 @@ def update_user():
             values.append(user_phone)
 
         if "primary_location" in request.json:
-            user_primary_location = request.json.get("primary_location", "").strip() #validation??
+            user_primary_location = request.json.get("primary_location", "").strip()
             if not user_primary_location:
-                return jsonify({"error": "Primary location cannot be empty"}), 400
+                return jsonify({"error": "Primary location is required"}), 400
             parts.append("user_primary_location = %s")
             values.append(user_primary_location)
 
