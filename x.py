@@ -11,7 +11,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-##############################
+############################## CONNECT TO db
 def db():
     try:
         db = mysql.connector.connect(
@@ -37,7 +37,7 @@ def no_cache(view):
         return response
     return no_cache_view
 
-##############################
+############################## EMAIL
 REGEX_EMAIL = "^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
 def validate_email( email ):
     email = email.strip()
@@ -45,8 +45,7 @@ def validate_email( email ):
         raise Exception("company_exception email")
     return email
 
-##############################
-# [a-z0-9æøå]
+############################## PASSWORD
 USER_PASSWORD_MIN = 8
 USER_PASSWORD_MAX = 50
 REGEX_USER_PASSWORD = f"^.{{{USER_PASSWORD_MIN},{USER_PASSWORD_MAX}}}$"
@@ -56,16 +55,15 @@ def validate_user_password( password ):
         raise Exception("company_exception user_password")
     return user_password
 
-##############################
-#0 to 9 letters a to f
+############################## UUID4
 REGEX_UUID4 = "^[0-9a-f]{32}$"
 def validate_uuid4(uuid):
     uuid = uuid.strip()
     if not re.match(REGEX_UUID4, uuid):
-        raise Exception("--error-- uuid invalid")
+        raise Exception("company_exception uuid invalid")
     return uuid
 
-##############################
+############################## PHONENUMBER
 USER_PHONE = 8
 REGEX_USER_PHONE = f"^[1-9][0-9]{{{USER_PHONE - 1}}}$"
 def validate_user_phone( phone ):
@@ -74,7 +72,7 @@ def validate_user_phone( phone ):
         raise Exception("company_exception user_phone")
     return user_phone
 
-##############################
+############################## LICENSE PLATE
 REGEX_USER_LICENSE_PLATE = "^[A-Za-z]{2}[0-9]{5}$"
 def validate_user_license_plate(license_plate):
     user_license_plate = license_plate.strip().upper()
@@ -82,16 +80,11 @@ def validate_user_license_plate(license_plate):
         raise Exception("company_exception user_license_plate")
     return user_license_plate
 
-##############################
-#0 to 9 letters a to f
-REGEX_UUID4 = "^[0-9a-f]{32}$"
-def validate_uuid4(uuid):
-    uuid = uuid.strip()
-    if not re.match(REGEX_UUID4, uuid):
-        raise Exception("--error-- uuid invalid")
-    return uuid
+############################## RESET PASSWORD EXPIRY
+#Reset password link expires after 15 min. 
+RESET_PASSWORD_EXPIRY = 900
 
-##############################
+############################## SEND EMAIL
 def send_email(subject, html):
     try:    
         # Create a gmail 
