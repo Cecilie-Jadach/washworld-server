@@ -337,7 +337,7 @@ def reset_password():
         if "db" in locals(): db.close()
 
 ############################## PAUSE MEMBERSHIP
-@app.patch("/api-membership-pause")
+@app.patch("/api-pause-membership")
 @jwt_required()
 def pause_membership():
     try:
@@ -345,7 +345,7 @@ def pause_membership():
         membership_pause_months = request.json.get("membership_pause_months", 0)
 
         if membership_pause_months not in [1, 2, 3]:
-            return jsonify({"error": "Chosse 1, 2 or 3 months"}), 400
+            return jsonify({"error": "Choose 1, 2 or 3 months"}), 400
 
         membership_paused_at = int(time.time())
 
@@ -356,9 +356,6 @@ def pause_membership():
         cursor.execute(q,(membership_paused_at, membership_pause_months, user_pk))
         db.commit()
 
-        if cursor.rowcount == 0:
-            return jsonify({"error": "User not found"}), 404
-
         return jsonify({"message": "Membership is paused"}), 200
     except Exception as ex: 
         ic(ex)
@@ -368,7 +365,7 @@ def pause_membership():
         if "db" in locals(): db.close()
 
 ############################## REACTIVATE MEMBERSHIP
-@app.patch("/api-membership-reactivate") 
+@app.patch("/api-reactivate-membership") 
 @jwt_required()
 def reactivate_membership():
     try:
