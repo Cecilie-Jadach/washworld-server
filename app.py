@@ -50,10 +50,10 @@ def login():
     except Exception as ex: 
         ic(ex)
         if "company_exception email" in str(ex):
-            return "Invalid credentials", 400
+            return jsonify({"error": "Invalid credentials"}), 400
 
         if "company_exception user_password" in str(ex):
-            return f"Password must be {x.USER_PASSWORD_MIN} to {x.USER_PASSWORD_MAX} characters", 400
+            return jsonify({"error": f"Password must be {x.USER_PASSWORD_MIN} to {x.USER_PASSWORD_MAX} characters"}), 400
         
         return jsonify({"error": "System under maintenance"}),500
         
@@ -143,10 +143,10 @@ def sign_up():
             return jsonify({"error": "Membership is required"}), 400
 
         if user_confirm_email != user_email:
-            return "Emails does not match", 400
+            return jsonify({"error": "Emails does not match"}), 400
 
         if user_confirm_password != user_password:
-            return "Passwords does not match", 400
+            return jsonify({"error": "Passwords does not match"}), 400
         
         if not terms_accepted:
             return jsonify({"error": "Accepted terms is required"}), 400
@@ -312,7 +312,7 @@ def reset_password():
         confirm_password = request.form.get("confirm-password", "").strip()
         
         if confirm_password != user_password:
-            return "Passwords does not match", 400
+            return jsonify({"error": "Passwords does not match"}), 400
         
         key = x.validate_uuid4(request.form.get("key", ""))
 
@@ -490,7 +490,7 @@ def update_membership():
         
         partial_query = ", ".join(parts)
 
-        if not parts: return "Nothing to update", 400
+        if not parts: return jsonify({"error": "Nothing to update"}), 400
 
         values.append(user_pk)
 
