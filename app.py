@@ -416,8 +416,7 @@ def show_license_plates():
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
 
-
-##############################
+############################## ADD LICENSE PLATE
 @app.post("/api-add-license-plate")
 @jwt_required()
 def add_license_plate():
@@ -442,8 +441,7 @@ def add_license_plate():
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
 
-
-##############################
+############################## DELETE LICENSE PLATE
 @app.delete("/api-delete-license-plate/<plate>")
 @jwt_required()
 def delete_license_plate(plate):
@@ -468,7 +466,6 @@ def delete_license_plate(plate):
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
-
 
 ############################## UPDATE MEMBERSHIP
 @app.patch("/api-update-membership")
