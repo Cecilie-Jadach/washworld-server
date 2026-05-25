@@ -138,6 +138,7 @@ def sign_up():
         membership_reactivated_at = 0
         membership_pause_months = 0
         membership_updated_at = 0
+        user_reset_password_key_requested_at = 0
 
         if not user_membership:
             return jsonify({"error": "Membership is required"}), 400
@@ -162,8 +163,8 @@ def sign_up():
         ic(user_reset_password_key)
 
         db, cursor = x.db()
-        q_user = "INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )"
-        cursor.execute(q_user, (user_pk, user_email, user_membership, user_hashed_password, user_phone, user_primary_location, access_to_all_washes, terms_accepted, offers_accepted, user_payment_method, user_verification_key, 0, user_reset_password_key, membership_created_at, user_created_at, membership_pause_months, membership_paused_at, membership_reactivated_at, membership_updated_at))
+        q_user = "INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )"
+        cursor.execute(q_user, (user_pk, user_email, user_membership, user_hashed_password, user_phone, user_primary_location, access_to_all_washes, terms_accepted, offers_accepted, user_payment_method, user_verification_key, 0, user_reset_password_key, membership_created_at, user_created_at, membership_pause_months, membership_paused_at, membership_reactivated_at, membership_updated_at, user_reset_password_key_requested_at))
 
         q_license = "INSERT INTO license_plates VALUES (%s, %s)"
         cursor.execute(q_license, (user_pk, user_license_plate))
