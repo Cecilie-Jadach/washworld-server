@@ -55,7 +55,7 @@ def login():
         if "company_exception user_password" in str(ex):
             return jsonify({"error": f"Password must be {x.USER_PASSWORD_MIN} to {x.USER_PASSWORD_MAX} characters"}), 400
         
-        return jsonify({"error": "System under maintenance"}),500
+        return jsonify({"error": "System under maintenance."}),500
         
     finally:
         if "cursor" in locals(): cursor.close()
