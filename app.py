@@ -39,6 +39,9 @@ def login():
         if not check_password_hash(row["user_password"], user_password):
             return jsonify({"error": "Wrong email or password"}), 401
 
+        if row["user_verified_at"] == 0:
+            return jsonify({"error": "Please verify your email before logging in"}), 401
+
         user = {
             "user_email": row["user_email"],
             "user_password": row["user_password"]
