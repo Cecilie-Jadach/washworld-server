@@ -595,3 +595,46 @@ def delete_user():
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
+
+############################## TOGGLE OFFERS (NOTIFICATIONS)
+@app.patch("/api-toggle-offers")
+@jwt_required()
+def toggle_offers():
+    try:
+        user_pk = get_jwt_identity()
+
+        db, cursor = x.db()
+        q = "UPDATE users SET offers_accepted = NOT offers_accepted WHERE  user_pk = %s"
+        cursor.execute(q,(user_pk,))
+        db.commit()
+
+        q = "SELECT offers_accepted FROM users WHERE user_pk= %s"
+        cursor.execute(q,(user_pk,))
+        row = cursor.fetchone()
+
+        return jsonify({"offers_accepted": row["offers_accepted"]}), 200
+
+    except Exception as ex: 
+        return jsonify({"error": "System under maintenance"}), 500
+    finally: 
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+############################## GET TOGGLE OFFERS (NOTIFICATIONS)
+@app.get("/api-get-offers")
+@jwt_required()
+def get_offers():
+    try:
+        user_pk = get_jwt_identity()
+
+        db, cursor = x.db()
+        q = "SELECT offers_accepted FROM users WHERE user_pk = %s"
+        cursor.execute(q,(user_pk,))
+        row = cursor.fetchone()
+
+        return jsonify({"offers_accepted": row["offers_accepted"]}), 200
+    except Exception as ex:
+        return jsonify({"error": "System under maintenance"}), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
